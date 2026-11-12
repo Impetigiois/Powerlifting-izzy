@@ -1,0 +1,475 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0e1012">
+<meta name="color-scheme" content="dark">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Izzy's Chimera">
+<meta name="format-detection" content="telephone=no">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="icon" type="image/png" href="icon-192.png">
+<title>Izzy's Chimera Workout</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0e1012; --panel:#171a1d; --panel2:#1e2226; --line:#2a2f35; --text:#eceff1; --mute:#8d97a0;
+  --me:#ff5a36; --de:#33c3ff; --acc:#9aa5ae; --test:#ffc933; --ok:#43d17a; --accent:#ffc933;
+  --r:14px;
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
+button,select,input,textarea{touch-action:manipulation}
+html,body{margin:0;overscroll-behavior-y:none;background:var(--bg);color:var(--text);font:16px/1.45 Inter,system-ui,-apple-system,Segoe UI,Roboto,sans-serif}
+body{padding-bottom:calc(84px + env(safe-area-inset-bottom))}
+h1,h2,h3,.cond{font-family:"Barlow Condensed","Arial Narrow",Inter,sans-serif;letter-spacing:.02em}
+header.top{padding:calc(18px + env(safe-area-inset-top)) calc(16px + env(safe-area-inset-right)) 6px calc(16px + env(safe-area-inset-left));max-width:720px;margin:0 auto}
+header.top h1{margin:0;font-size:30px;line-height:1;text-transform:uppercase;font-weight:700}
+header.top h1 span{color:var(--accent)}
+header.top p{margin:4px 0 0;color:var(--mute);font-size:14px}
+main{max-width:720px;margin:0 auto;padding:0 calc(12px + env(safe-area-inset-right)) 0 calc(12px + env(safe-area-inset-left))}
+nav.tabs{position:fixed;left:0;right:0;bottom:0;background:#101316f2;backdrop-filter:blur(8px);border-top:1px solid var(--line);display:flex;justify-content:center;z-index:5;padding-bottom:env(safe-area-inset-bottom)}
+nav.tabs button{flex:1;max-width:180px;background:none;border:0;color:var(--mute);padding:12px 4px 14px;font:600 13px Inter,sans-serif;cursor:pointer;letter-spacing:.04em;text-transform:uppercase}
+nav.tabs button.on{color:var(--accent);box-shadow:inset 0 2px 0 var(--accent)}
+.strip{display:flex;gap:8px;overflow-x:auto;padding:10px 4px 6px;scrollbar-width:none}
+.strip::-webkit-scrollbar{display:none}
+.wk{flex:0 0 auto;min-width:58px;background:var(--panel);border:1px solid var(--line);color:var(--text);border-radius:12px;padding:8px 10px;text-align:center;cursor:pointer;font:600 14px "Barlow Condensed",sans-serif;letter-spacing:.04em}
+.wk small{display:block;font:500 10px Inter,sans-serif;color:var(--mute);letter-spacing:0;text-transform:uppercase}
+.wk.on{border-color:var(--accent);background:#2a2410}
+.wk.done{border-color:#2f6a47}
+.days{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin:6px 0 10px}
+.dy{background:var(--panel);border:1px solid var(--line);border-radius:12px;color:var(--text);padding:8px 4px;cursor:pointer;text-align:center;font:600 13px Inter,sans-serif}
+.dy small{display:block;color:var(--mute);font-weight:500;font-size:11px}
+.dy.on{border-color:var(--accent);background:#2a2410}
+.focus{background:var(--panel);border:1px solid var(--line);border-left:4px solid var(--accent);border-radius:var(--r);padding:12px 14px;margin:6px 0 12px;font-size:14px;color:#cfd6db}
+.focus b{color:var(--text)}
+.dayhead{display:flex;justify-content:space-between;align-items:baseline;margin:12px 2px 8px}
+.dayhead h2{margin:0;font-size:24px;text-transform:uppercase}
+.prog{font:600 13px Inter,sans-serif;color:var(--mute)}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:var(--r);margin:0 0 12px;overflow:hidden}
+.card>header{padding:12px 14px 8px;display:flex;gap:10px;align-items:flex-start}
+.card h3{margin:0;font-size:21px;line-height:1.1;font-weight:600}
+.card .cue{color:var(--mute);font-size:13px;margin-top:3px}
+.tag{flex:0 0 auto;font:700 11px Inter,sans-serif;padding:3px 7px;border-radius:6px;letter-spacing:.06em;color:#0b0d0e;margin-top:2px}
+.tag.ME{background:var(--me)} .tag.DE{background:var(--de)} .tag.ACC{background:var(--acc)} .tag.TEST{background:var(--test)} .tag.GPP{background:#b78cff}
+.rows{padding:2px 8px 10px}
+.row{display:flex;align-items:center;gap:10px;padding:7px 6px;border-top:1px solid var(--line)}
+.row:first-child{border-top:0}
+.row.top{background:#2b1712;border-radius:10px;border-top:0;margin-top:4px}
+.row.warmrow .lbl{color:var(--mute)}
+.row input[type=checkbox]{appearance:none;-webkit-appearance:none;flex:0 0 28px;width:28px;height:28px;border:2px solid #44505a;border-radius:8px;background:transparent;display:grid;place-content:center;cursor:pointer;margin:0}
+.row input[type=checkbox]:checked{background:var(--ok);border-color:var(--ok)}
+.row input[type=checkbox]:checked::after{content:"✓";color:#06210f;font:700 17px/1 Inter,sans-serif}
+.lbl{flex:1;min-width:0;font-size:15px}
+.lbl small{display:block;color:var(--mute);font-size:12px}
+.in{width:78px;background:var(--panel2);border:1px solid var(--line);border-radius:9px;color:var(--text);padding:8px 8px;font:600 16px Inter,sans-serif;text-align:center}
+.in.sm{width:58px}
+.in:focus{outline:2px solid var(--accent);outline-offset:0}
+.u{color:var(--mute);font-size:12px;margin-left:-4px}
+.big{padding:6px 14px 4px;display:flex;align-items:baseline;gap:10px;flex-wrap:wrap}
+.big .num{font:700 40px "Barlow Condensed",sans-serif;color:var(--de)}
+.big .meta{color:#cfd6db;font-size:14px}
+.chips{display:flex;flex-wrap:wrap;gap:8px;padding:6px 14px 14px}
+.chip{width:46px;height:46px;border-radius:12px;border:2px solid #3a4650;background:transparent;color:var(--mute);font:700 15px Inter,sans-serif;cursor:pointer}
+.chip.on{background:var(--de);border-color:var(--de);color:#04141c}
+.note{padding:0 14px 12px;color:var(--mute);font-size:13px}
+.att{display:flex;align-items:center;gap:8px;padding:8px 6px;border-top:1px solid var(--line)}
+.att b{flex:1;font-size:15px}
+select.in{width:112px;font-size:16px;padding:9px 6px}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:var(--r);padding:14px;margin:0 0 12px}
+.panel h2{margin:0 0 8px;font-size:22px;text-transform:uppercase}
+.panel h3{margin:14px 0 6px;font-size:17px;text-transform:uppercase;color:var(--accent)}
+.panel p,.panel li{color:#cfd6db;font-size:14.5px}
+.panel ul{padding-left:20px;margin:6px 0}
+label.f{display:block;font-size:13px;color:var(--mute);margin:10px 0 4px}
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.grid3 .in{width:100%}
+.seg{display:flex;gap:6px}
+.seg button,.btn{background:var(--panel2);border:1px solid var(--line);color:var(--text);border-radius:10px;padding:10px 14px;font:600 14px Inter,sans-serif;cursor:pointer}
+.seg button.on{background:var(--accent);color:#181300;border-color:var(--accent)}
+.btn.pri{background:var(--accent);color:#181300;border-color:var(--accent)}
+.btn.dng{color:#ff8d7a}
+.btn.sm{padding:7px 10px;font-size:13px}
+textarea.in{width:100%;height:96px;text-align:left;font:16px ui-monospace,Menlo,monospace;resize:vertical}
+.sw{display:flex;align-items:center;gap:10px;margin-top:10px}
+.sw input{width:22px;height:22px}
+.bar{height:8px;background:var(--panel2);border-radius:99px;overflow:hidden}
+.bar i{display:block;height:100%;background:var(--ok)}
+table{width:100%;border-collapse:collapse;font-size:14px}
+th,td{text-align:left;padding:7px 4px;border-top:1px solid var(--line)}
+th{color:var(--mute);font-weight:500;font-size:12px;text-transform:uppercase;border-top:0}
+.kpi{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;text-align:center}
+.kpi div{background:var(--panel2);border-radius:12px;padding:10px 4px}
+.kpi b{display:block;font:700 24px "Barlow Condensed",sans-serif}
+.kpi span{font-size:11px;color:var(--mute);text-transform:uppercase}
+.up{color:var(--ok)}
+.empty{color:var(--mute);font-size:14px}
+.warn{background:#2b2410;border:1px solid #5a4a14;color:#ffe08a;border-radius:12px;padding:10px 12px;font-size:14px;margin:8px 0}
+.plates{font:600 18px "Barlow Condensed",sans-serif;margin-top:8px;color:var(--accent)}
+a{color:var(--accent)}
+</style>
+</head>
+<body>
+<header class="top">
+  <h1>Izzy's <span>Chimera</span> Workout</h1>
+  <p>7-week Westside block for bench, squat &amp; deadlift</p>
+</header>
+<main id="app"></main>
+<nav class="tabs" id="tabs">
+  <button data-tab="train">Train</button>
+  <button data-tab="progress">Progress</button>
+  <button data-tab="setup">Setup</button>
+  <button data-tab="guide">Guide</button>
+</nav>
+
+<script>
+(function(){
+'use strict';
+
+/* ---------- state ---------- */
+var KEY='conjugate-max-v1';
+var S={v:1,unit:'lb',maxes:{bench:0,squat:0,deadlift:0},start:null,arms:true,week:1,day:1,tab:'setup',log:{},last:{}};
+function load(){
+  try{var raw=localStorage.getItem(KEY); if(raw){var o=JSON.parse(raw); if(o&&o.v===1){S=Object.assign(S,o);}}}catch(e){}
+}
+function save(){ try{localStorage.setItem(KEY,JSON.stringify(S));}catch(e){} }
+load();
+if(S.maxes.bench>0&&S.maxes.squat>0&&S.maxes.deadlift>0&&S.tab==='setup'&&!S._seen){S.tab='train';}
+
+/* ---------- helpers ---------- */
+function $(s,r){return (r||document).querySelector(s);}
+function esc(s){return String(s).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];});}
+function step(){return S.unit==='kg'?2.5:5;}
+function rnd(x){return Math.round(x/step())*step();}
+function fmt(x){var v=Math.round(x*100)/100;return String(v);}
+function ready(){return S.maxes.bench>0&&S.maxes.squat>0&&S.maxes.deadlift>0;}
+function W(lift,pct){return ready()?rnd(S.maxes[lift]*pct/100):null;}
+var DAYS=[null,
+ {key:1,dow:'Mon',short:'ME Upper'},
+ {key:2,dow:'Tue',short:'ME Lower'},
+ {key:3,dow:'Thu',short:'DE Upper'},
+ {key:4,dow:'Fri',short:'DE Lower'}];
+var PHASE=['','Groove','Load','Wave 1 peak','New wave','Peak','Taper','Test'];
+
+/* ---------- program data ---------- */
+var ME_UP=[null,
+ {n:'Close-Grip Bench Press',f:.92,m:1,cue:'Hands just inside shoulder width, elbows tucked, touch chest and press fast.'},
+ {n:'Floor Press (1s pause)',f:.90,m:3,cue:'Let triceps rest on the floor, pause one second, then press fast. Work to a hard triple.'},
+ {n:'2-Board Press',f:1.05,m:1,cue:'Overload the lockout. Bar touches boards on chest, no bouncing.'},
+ {n:'Incline Bench Press',f:.80,m:3,cue:'30 to 45 degree bench. Work to a hard triple with the same leg drive as your flat bench.'},
+ {n:'Spoto Press (pause 1 in. above chest)',f:.95,m:1,cue:'Pause with the bar hovering about an inch off your chest, then drive. Builds the bottom position.'},
+ {n:'Competition Bench: opener rehearsal',f:1,m:'r',cue:'Competition grip, pause on chest. Stop at a smooth, fast single around 90%. Do not grind.'}];
+var ME_LO=[null,
+ {n:'Parallel Box Squat',lift:'squat',f:.92,m:1,cue:'Sit back onto the box, relax the hips for a beat (no rocking), then explode up.'},
+ {n:'Deficit Deadlift (2 in.)',lift:'deadlift',f:.90,m:1,cue:'Stand on a 2-inch platform. Keep your back tight and push the floor away.'},
+ {n:'Good Morning (to a 3RM)',lift:'squat',f:.65,m:3,cue:'Hips back, soft knees, flat back. Work to a hard but clean triple.'},
+ {n:'Safety Bar Squat',lift:'squat',f:.90,m:1,cue:'Upper back stays tall. Hit full depth on every rep.'},
+ {n:'Rack Pull (just below knee)',lift:'deadlift',f:1.10,m:1,cue:'Bar set just below the kneecap. Lock out hard with hips through.'},
+ {n:'Competition Squat: opener rehearsal',lift:'squat',f:1,m:'r',cue:'Full depth, competition stance. Stop at a smooth, fast single around 90%.'}];
+var DE_UP=[null,{p:50,s:9},{p:55,s:9},{p:60,s:6},{p:55,s:9},{p:60,s:9},{p:50,s:5}];
+var DE_SQ=[null,{p:50,s:12},{p:55,s:10},{p:60,s:8},{p:55,s:12},{p:60,s:10},{p:50,s:5}];
+var DE_DL=[null,{p:60,s:8},{p:65,s:7},{p:70,s:6},{p:60,s:8},{p:65,s:6},{p:55,s:4}];
+var TRI1=[null,['JM Press','4','8-10'],['Barbell Skullcrusher','4','8-10'],['JM Press','4','6-8'],['Rolling DB Triceps Extension','4','10-12'],['JM Press','4','6-8'],['JM Press','2','10']];
+var TRI3=[null,['Rolling DB Triceps Extension','4','10-12'],['Overhead Cable Triceps Extension','4','10-12'],['Rolling DB Triceps Extension','4','10-12'],['Overhead Cable Triceps Extension','4','10-12'],['Barbell Skullcrusher','4','8-10'],['Rope Pushdown','2','15']];
+var LAT1=[null,['Chest-Supported Row','4','8-10'],['Lat Pulldown (neutral grip)','4','10-12'],['Barbell Row','4','8'],['Chest-Supported Row','4','8-10'],['Pull-Ups (or Pulldown)','4','6-10'],['Lat Pulldown (neutral grip)','2','12']];
+var HAM2=[null,['Romanian Deadlift','3','8-10'],['Glute-Ham Raise (or Back Raise)','3','8-10'],['Romanian Deadlift','3','8-10'],['Lying Leg Curl','3','10-12'],['Romanian Deadlift','3','6-8'],['Lying Leg Curl','2','12']];
+var QUAD2=[null,['Leg Press','3','10-12'],['Walking Lunge (DB)','3','10 / leg'],['Leg Press','3','10-12'],['Bulgarian Split Squat','3','8-10 / leg'],['Leg Press','3','8-10'],['Leg Press','2','10']];
+
+function acc(id,tag,a,note){return {id:id,type:'acc',tag:tag,name:a[0],sets:+a[1],reps:a[2],note:note||''};}
+
+function meBlock(def,lift,week){
+  var E=ready()?S.maxes[lift]*def.f:null, ramp;
+  if(def.m===1) ramp=[[50,5],[60,3],[70,3],[80,2],[87,1],[93,1],[97,1],[100,1,1]];
+  else if(def.m===3) ramp=[[50,5],[60,3],[70,3],[80,3],[90,3,1]];
+  else ramp=[[50,5],[60,3],[70,3],[80,2],[87,1],[92,1,1]];
+  return {id:'me',type:'me',name:def.n,lift:lift,cue:def.cue,mode:def.m,E:E,
+    ramp:ramp.map(function(r){return {p:r[0],r:r[1],top:!!r[2],w:E?rnd(E*r[0]/100):null};}),
+    target: def.m===1?'Work up to a 1RM (go by bar speed)':(def.m===3?'Work up to a 3RM':'Work up to a smooth ~90% single')};
+}
+function deBlock(id,name,lift,spec,reps,rest,note){
+  return {id:id,type:'de',name:name,lift:lift,pct:spec.p,sets:spec.s,reps:reps,rest:rest,note:note,w:W(lift,spec.p)};
+}
+function armBlocks(day,week){
+  if(!S.arms||week>5) return [];
+  if(day===1) return [acc('arm1','Arms (optional)',['Incline DB Curl','3','10-12'],'Elbows back, full stretch at the bottom. Stop 1-2 reps shy of failure.'),
+                      acc('arm2','Arms (optional)',['Hammer Curl','3','12-15'],'Strict, no swing.')];
+  return [acc('arm1','Arms (optional)',['EZ-Bar Preacher Curl','3','10-12'],'Full stretch, squeeze at the top.'),
+          acc('arm2','Arms (optional)',['Reverse EZ-Bar Curl','3','12-15'],'Forearm and brachialis work. Keep it strict.')];
+}
+function testBlock(lift,name){
+  var warm=lift==='deadlift'?[[40,5],[55,3],[70,2],[80,1],[87,1]]:[[40,5],[55,3],[65,3],[75,2],[82,1],[87,1]];
+  return {id:'test',type:'test',lift:lift,name:name,
+    warm:warm.map(function(x){return {p:x[0],r:x[1],w:W(lift,x[0])};}),
+    att:[{l:'Opener',p:90},{l:'Second attempt',p:97},{l:'Third attempt',p:102}].map(function(a){return {l:a.l,p:a.p,w:W(lift,a.p)};})};
+}
+
+function getDay(week,day){
+  var B=[], title, sub;
+  if(week===7){
+    if(day===1){title='Bench Max Test';sub='Opener, second, third. Rest 4-5 min between attempts.';
+      B=[testBlock('bench','Competition Bench Press'),acc('a1','Upper back',['Face Pull','2','15-20'],'Light, just to loosen the shoulders.')];}
+    else if(day===2){title='Squat Max Test';sub='Full depth, competition stance. Rest 5 min between attempts.';
+      B=[testBlock('squat','Competition Back Squat'),acc('a1','Abs',['Cable Crunch','3','12'],'Light.')];}
+    else if(day===3){title='Primer + Recovery';sub='Optional. Short and easy. Keeps the bench groove without adding fatigue.';
+      B=[deBlock('de','Speed Bench Press','bench',{p:45,s:5},3,'45-60 s','Fast and crisp. Stop if anything feels sore or heavy.'),
+         acc('a1','Upper back',['Dumbbell Row','2','12'],'Easy.')];}
+    else {title='Deadlift Max Test';sub='Last test. Take your time between attempts, reset every rep.';
+      B=[testBlock('deadlift','Competition Deadlift')];}
+    return {title:title,sub:sub,blocks:B};
+  }
+  if(day===1){
+    title='Max Effort Upper';sub='Bench variation to a max, then triceps, lats and upper back.';
+    B.push(meBlock(ME_UP[week],'bench',week));
+    B.push(acc('tri','Triceps',TRI1[week],week===6?'Light and smooth.':'Heavy triceps = a stronger lockout.'));
+    B.push(acc('lat','Lats',LAT1[week],'Pull to your lower chest or belly.'));
+    B.push(acc('rd','Rear delts / upper back',['Face Pull',week===6?'2':'3','15-20'],'Pull to your face, elbows high.'));
+    B=B.concat(armBlocks(1,week));
+  } else if(day===2){
+    title='Max Effort Lower';sub='Squat or pull variation to a max, then posterior chain and abs.';
+    var d=ME_LO[week];
+    B.push(meBlock(d,d.lift,week));
+    B.push(acc('ham','Hamstrings / glutes',HAM2[week],'Feel the stretch, drive hips through.'));
+    B.push(acc('rev','Low back',['Reverse Hyper (or 45-degree Back Raise)',week===6?'2':'4','12-15'],'Swing under control, squeeze at the top. Heavy-ish but clean.'));
+    B.push(acc('quad','Quads / legs',QUAD2[week],''));
+    B.push(acc('abs','Abs',['Hanging Leg Raise (or Cable Crunch)',week===6?'2':'4','10-15'],'Abs are a weak point for most lifters. Brace hard.'));
+  } else if(day===3){
+    title='Dynamic Effort Upper';sub='Speed bench, then triceps, upper back and shoulders.';
+    var u=DE_UP[week];
+    var per=u.s>=9?'3 sets each: close, medium, wide grip':(u.s===6?'2 sets each: close, medium, wide grip':'Alternate grips each set');
+    B.push(deBlock('de','Speed Bench Press','bench',u,3,'45-60 s',per+'. Bar to chest, explode up. Every rep as fast as possible.'));
+    B.push(acc('tri','Triceps',TRI3[week],'Control the lowering, full stretch.'));
+    B.push(acc('row','Upper back',['Dumbbell Row',week===6?'2':'4','10-12'],'Pull to your hip, squeeze your lat.'));
+    B.push(acc('del','Shoulders',['Lateral Raise + Rear Delt Fly (superset)',week===6?'2':'3','15-20'],'Light, strict, shoulder health.'));
+    B=B.concat(armBlocks(3,week));
+  } else {
+    title='Dynamic Effort Lower';sub='Box squat speed, speed pulls, then low back, hamstrings, abs and sled.';
+    var q=DE_SQ[week], p=DE_DL[week];
+    var sqName=week<=3?'Speed Box Squat (parallel)':'Speed Wide-Stance Box Squat';
+    var dlName=week<=3?'Speed Deadlift (from floor)':'Speed Deadlift (1 in. deficit)';
+    B.push(deBlock('de',sqName,'squat',q,2,'45-60 s','Sit back, stay tight, explode. Stop the set early if bar speed drops.'));
+    B.push(deBlock('de2',dlName,'deadlift',p,1,'45-60 s','Reset every rep, pull as fast as you can.'));
+    B.push(acc('ham','Hamstrings',['Lying Leg Curl (or Glute-Ham Raise)',week===6?'2':'3','10-15'],''));
+    B.push(acc('rev','Low back',['Reverse Hyper (light, higher reps)',week===6?'2':'3','15-20'],'Lighter than Tuesday. Flush the back, not fatigue it.'));
+    B.push(acc('abs','Abs',['Cable Crunch (weighted)',week===6?'2':'4','10-15'],'Standing or kneeling, hard exhale.'));
+    B.push({id:'gpp',type:'gpp',name:'GPP: Sled Drag or Brisk Walk',detail:week===6?'10 min easy':'8 x 40 yards, or 15 minutes brisk walk. Easy conditioning, not a workout.'});
+  }
+  return {title:title,sub:sub,blocks:B};
+}
+
+var FOCUS=[null,
+ 'Wave 1, week 1. Find smooth max efforts, not grinders. Speed work at 50% of your competition max. Accessories 2-3 reps shy of failure.',
+ 'Add load. ME rotates to a new variation. Speed work steps up to 55%. If bar speed is slow on speed day, drop 5-10 lbs and move faster.',
+ 'End of wave 1. Speed work at 60% but fewer sets, so fatigue stays manageable. Hit your best top sets of the block if they feel fast.',
+ 'Wave 2 begins. New bars and stances on speed work reset to 55%. Rotate to fresh ME variations.',
+ 'Peak week of the block. Heaviest ME work and 60% speed. Keep accessories 1-2 reps shy of failure. Eat and sleep well this week.',
+ 'Taper. Rehearse your openers, halve accessory sets, keep speed crisp. You should feel fresher every day. Nothing to prove this week.',
+ 'Test week. Mon bench, Tue squat, Thu optional primer, Fri deadlift. Go 90%, 97%, then 102% of your starting max, and adjust by how fast the bar moves.'];
+
+/* ---------- log access ---------- */
+function L(w,d){var k='w'+w+'d'+d; if(!S.log[k]) S.log[k]={done:{},vals:{}}; return S.log[k];}
+function totals(w,d){
+  var day=getDay(w,d), t=0, n=0, lg=S.log['w'+w+'d'+d]||{done:{},vals:{}};
+  day.blocks.forEach(function(b){
+    if(b.type==='me') b.ramp.forEach(function(r,i){t++; if(lg.done[b.id+':'+i]) n++;});
+    else if(b.type==='de'||b.type==='acc'){for(var i=0;i<b.sets;i++){t++; if(lg.done[b.id+':'+i]) n++;}}
+    else if(b.type==='gpp'){t++; if(lg.done[b.id+':0']) n++;}
+    else if(b.type==='test'){b.warm.forEach(function(r,i){t++; if(lg.done[b.id+':w'+i]) n++;}); b.att.forEach(function(a,i){t++; var v=lg.vals[b.id+':a'+i]; if(v&&v.res) n++;});}
+  });
+  return [n,t];
+}
+function weekTotals(w){var n=0,t=0;for(var d=1;d<=4;d++){var x=totals(w,d);n+=x[0];t+=x[1];}return [n,t];}
+
+/* ---------- renderers ---------- */
+function wtxt(w){return w==null?'set maxes':fmt(w)+' '+S.unit;}
+function renderMe(b,lg){
+  var h='<section class="card"><header><span class="tag ME">ME</span><div><h3>'+esc(b.name)+'</h3><div class="cue">'+esc(b.target)+'. Rest 3-5 min. '+esc(b.cue)+'</div></div></header><div class="rows">';
+  b.ramp.forEach(function(r,i){
+    var id=b.id+':'+i, v=lg.vals[id]||{}, w=(v.w!=null&&v.w!=='')?v.w:(r.w!=null?r.w:'');
+    var lbl=r.top?(b.mode===1?'Top single':(b.mode===3?'Top triple':'Final single'))+' ('+r.p+'%+)':(r.r+' x '+r.p+'%');
+    h+='<div class="row'+(r.top?' top':' warmrow')+'"><input type="checkbox" data-k="'+id+'"'+(lg.done[id]?' checked':'')+'>'
+      +'<div class="lbl">'+(r.top?'<b>'+lbl+'</b>':lbl)+(r.top?'<small>Log what you actually lifted</small>':'')+'</div>'
+      +'<input class="in" type="number" inputmode="decimal" step="any" data-w="'+id+'" data-ex="'+esc(b.name)+'" value="'+esc(w)+'" aria-label="weight">'
+      +(r.top?'<span class="u">x</span><input class="in sm" type="number" inputmode="numeric" data-r="'+id+'" value="'+esc(v.r!=null?v.r:r.r)+'" aria-label="reps">':'<span class="u">'+S.unit+'</span>')
+      +'</div>';
+  });
+  return h+'</div></section>';
+}
+function renderDe(b,lg){
+  var h='<section class="card"><header><span class="tag DE">DE</span><div><h3>'+esc(b.name)+'</h3><div class="cue">'+esc(b.note)+'</div></div></header>';
+  h+='<div class="big"><span class="num">'+(b.w==null?'--':fmt(b.w))+'</span><span class="meta">'+S.unit+' ('+b.pct+'%) &middot; '+b.sets+' x '+b.reps+' &middot; rest '+esc(b.rest)+'</span></div><div class="chips">';
+  for(var i=0;i<b.sets;i++){var id=b.id+':'+i; h+='<button class="chip'+(lg.done[id]?' on':'')+'" data-chip="'+id+'">'+(i+1)+'</button>';}
+  return h+'</div></section>';
+}
+function renderAcc(b,lg){
+  var h='<section class="card"><header><span class="tag ACC">'+esc(b.tag.split(' ')[0].toUpperCase().slice(0,5))+'</span><div><h3>'+esc(b.name)+'</h3><div class="cue">'+b.sets+' x '+esc(b.reps)+(b.note?' &middot; '+esc(b.note):'')+'</div></div></header><div class="rows">';
+  for(var i=0;i<b.sets;i++){
+    var id=b.id+':'+i, v=lg.vals[id]||{}, ph=S.last[b.name]!=null?S.last[b.name]:'';
+    h+='<div class="row"><input type="checkbox" data-k="'+id+'"'+(lg.done[id]?' checked':'')+'><div class="lbl">Set '+(i+1)+'</div>'
+     +'<input class="in" type="number" inputmode="decimal" step="any" data-w="'+id+'" data-ex="'+esc(b.name)+'" placeholder="'+esc(ph||S.unit)+'" value="'+esc(v.w!=null?v.w:'')+'" aria-label="weight">'
+     +'<span class="u">x</span><input class="in sm" type="number" inputmode="numeric" data-r="'+id+'" placeholder="reps" value="'+esc(v.r!=null?v.r:'')+'" aria-label="reps"></div>';
+  }
+  return h+'</div></section>';
+}
+function renderGpp(b,lg){
+  var id=b.id+':0';
+  return '<section class="card"><header><span class="tag GPP">GPP</span><div><h3>'+esc(b.name)+'</h3><div class="cue">'+esc(b.detail)+'</div></div></header><div class="rows"><div class="row"><input type="checkbox" data-k="'+id+'"'+(lg.done[id]?' checked':'')+'><div class="lbl">Done</div></div></div></section>';
+}
+function renderTest(b,lg){
+  var h='<section class="card"><header><span class="tag TEST">TEST</span><div><h3>'+esc(b.name)+'</h3><div class="cue">Warm up, then three attempts. Based on your starting max of '+wtxt(S.maxes[b.lift])+'. Adjust attempts by how fast the previous one moved.</div></div></header><div class="rows">';
+  b.warm.forEach(function(r,i){var id=b.id+':w'+i; h+='<div class="row warmrow"><input type="checkbox" data-k="'+id+'"'+(lg.done[id]?' checked':'')+'><div class="lbl">Warm-up: '+r.r+' x '+r.p+'%</div><div class="lbl" style="flex:0 0 auto;text-align:right"><b>'+(r.w==null?'--':fmt(r.w))+'</b> <span class="u">'+S.unit+'</span></div></div>';});
+  b.att.forEach(function(a,i){
+    var id=b.id+':a'+i, v=lg.vals[id]||{}, w=(v.w!=null&&v.w!=='')?v.w:(a.w!=null?a.w:'');
+    h+='<div class="att"><b>'+a.l+'<small style="display:block;color:var(--mute);font-weight:400;font-size:12px">~'+a.p+'%</small></b><input class="in" type="number" inputmode="decimal" step="any" data-w="'+id+'" value="'+esc(w)+'" aria-label="attempt weight">'
+     +'<select class="in" data-att="'+id+'"><option value="">Result</option><option value="made"'+(v.res==='made'?' selected':'')+'>Made it</option><option value="miss"'+(v.res==='miss'?' selected':'')+'>Missed</option></select></div>';
+  });
+  return h+'</div></section>';
+}
+
+function renderTrain(){
+  var w=S.week,d=S.day,day=getDay(w,d),lg=L(w,d),tt=totals(w,d);
+  var h='';
+  if(!ready()) h+='<div class="warn">Enter your current bench, squat and deadlift max in <b>Setup</b> so the app can fill in your weights.</div>';
+  h+='<div class="strip">';
+  for(var i=1;i<=7;i++){var wt=weekTotals(i);var done=wt[1]&&wt[0]===wt[1];h+='<button class="wk'+(i===w?' on':'')+(done?' done':'')+'" data-week="'+i+'">W'+i+'<small>'+PHASE[i]+'</small></button>';}
+  h+='</div><div class="days">';
+  for(var j=1;j<=4;j++){h+='<button class="dy'+(j===d?' on':'')+'" data-day="'+j+'">'+DAYS[j].dow+'<small>'+DAYS[j].short+'</small></button>';}
+  h+='</div><div class="focus"><b>Week '+w+': '+PHASE[w]+'.</b> '+esc(FOCUS[w])+'</div>';
+  h+='<div class="dayhead"><h2>'+esc(day.title)+'</h2><span class="prog" id="prog">'+tt[0]+' / '+tt[1]+' sets</span></div><p class="note" style="padding:0 2px 8px">'+esc(day.sub)+'</p>';
+  day.blocks.forEach(function(b){
+    h+= b.type==='me'?renderMe(b,lg): b.type==='de'?renderDe(b,lg): b.type==='acc'?renderAcc(b,lg): b.type==='gpp'?renderGpp(b,lg): renderTest(b,lg);
+  });
+  if(w<7) h+='<p class="note">Warm up first: 5 minutes easy cardio, then light sets of the lift. Use a spotter or safeties on every heavy bench and squat.</p>';
+  return h;
+}
+
+function ep(w,r){return r>1?w*(1+r/30):w;}
+function renderProgress(){
+  var h='<div class="panel"><h2>Block completion</h2>';
+  for(var w=1;w<=7;w++){var t=weekTotals(w),pc=t[1]?Math.round(100*t[0]/t[1]):0;
+    h+='<div style="display:flex;justify-content:space-between;font-size:14px;margin-top:8px"><span>Week '+w+' <span style="color:var(--mute)">'+PHASE[w]+'</span></span><span style="color:var(--mute)">'+pc+'%</span></div><div class="bar"><i style="width:'+pc+'%"></i></div>';}
+  h+='</div>';
+  // ME log
+  var rows='';
+  for(var wk=1;wk<=6;wk++){
+    [1,2].forEach(function(dd){
+      var day=getDay(wk,dd), me=day.blocks[0], lg=S.log['w'+wk+'d'+dd]; if(!lg) return;
+      var top=me.ramp.length-1, v=lg.vals[me.id+':'+top];
+      if(v&&v.w!=null&&v.w!==''&&+v.w>0){var r=v.r!=null&&v.r!==''?+v.r:me.ramp[top].r;
+        rows+='<tr><td>W'+wk+'</td><td>'+esc(me.name)+'</td><td>'+fmt(+v.w)+' x '+r+'</td></tr>';}
+    });
+  }
+  h+='<div class="panel"><h2>Max effort top sets</h2>'+(rows?'<table><tr><th>Wk</th><th>Lift</th><th>Top set ('+S.unit+')</th></tr>'+rows+'</table>':'<p class="empty">Log your top sets on max effort days and they will show up here.</p>')+'</div>';
+  // test results
+  var lifts=[['bench','Bench',1],['squat','Squat',2],['deadlift','Deadlift',4]], tot=0, st=0, any=false, best3=true, tr='';
+  lifts.forEach(function(x){
+    var lg=S.log['w7d'+x[2]], best=0;
+    if(lg){for(var i=0;i<3;i++){var v=lg.vals['test:a'+i]; if(v&&v.res==='made'&&+v.w>best) best=+v.w;}}
+    var s=S.start?S.start[x[0]]:S.maxes[x[0]];
+    if(best>0){any=true;}else{best3=false;} tot+=best; st+=s||0;
+    tr+='<tr><td>'+x[1]+'</td><td>'+(s?fmt(s):'--')+'</td><td>'+(best?'<b>'+fmt(best)+'</b>':'--')+'</td><td class="'+(best>s?'up':'')+'">'+(best&&s?((best-s>=0?'+':'')+fmt(best-s)):'')+'</td></tr>';
+  });
+  h+='<div class="panel"><h2>Test week results</h2>';
+  if(any&&best3){h+='<div class="kpi"><div><b>'+fmt(tot)+'</b><span>New total</span></div><div><b>'+fmt(st)+'</b><span>Start total</span></div><div><b class="up">'+(tot-st>=0?'+':'')+fmt(tot-st)+'</b><span>Change</span></div><div><b>'+S.unit+'</b><span>Unit</span></div></div>';}
+  h+='<table style="margin-top:10px"><tr><th>Lift</th><th>Start</th><th>Best made</th><th>Change</th></tr>'+tr+'</table>';
+  if(!any) h+='<p class="empty">Week 7 attempts you mark as Made it appear here.</p>';
+  else if(best3) h+='<p class="note" style="padding:8px 0 0">Next block: put your new maxes into Setup and start again at Week 1.</p>';
+  return h+'</div>';
+}
+
+function renderSetup(){
+  var m=S.maxes;
+  return '<div class="panel"><h2>Your numbers</h2><p>Enter your current <b>competition</b> 1-rep maxes (or a recent true best). All speed work and max-effort ramps are calculated from these.</p>'
+   +'<label class="f">Units (switching clears your log)</label><div class="seg"><button data-unit="lb" class="'+(S.unit==='lb'?'on':'')+'">lb</button><button data-unit="kg" class="'+(S.unit==='kg'?'on':'')+'">kg</button></div>'
+   +'<div class="grid3"><div><label class="f">Bench</label><input class="in" id="m-bench" type="number" inputmode="decimal" value="'+(m.bench||'')+'"></div>'
+   +'<div><label class="f">Squat</label><input class="in" id="m-squat" type="number" inputmode="decimal" value="'+(m.squat||'')+'"></div>'
+   +'<div><label class="f">Deadlift</label><input class="in" id="m-deadlift" type="number" inputmode="decimal" value="'+(m.deadlift||'')+'"></div></div>'
+   +'<div class="sw"><input type="checkbox" id="arms"'+(S.arms?' checked':'')+'><label for="arms" style="font-size:14px">Include short arm finisher on upper days (weeks 1-5). Turn off for max recovery.</label></div>'
+   +'<p style="margin-top:12px"><button class="btn pri" id="savemax">Save &amp; start training</button></p></div>'
+   +'<div class="panel"><h2>Don\'t know your max?</h2><p>Enter a recent hard set (not to failure, 2-5 reps) to estimate it.</p>'
+   +'<div class="grid3"><div><label class="f">Weight</label><input class="in" id="e-w" type="number" inputmode="decimal"></div><div><label class="f">Reps</label><input class="in" id="e-r" type="number" inputmode="numeric"></div><div><label class="f">Estimated 1RM</label><input class="in" id="e-out" readonly></div></div>'
+   +'<div class="seg" style="margin-top:10px;flex-wrap:wrap"><button class="btn sm" data-use="bench">Use for bench</button><button class="btn sm" data-use="squat">Use for squat</button><button class="btn sm" data-use="deadlift">Use for deadlift</button></div></div>'
+   +'<div class="panel"><h2>Plate calculator</h2><label class="f">Total bar weight ('+S.unit+')</label><input class="in" id="p-w" type="number" inputmode="decimal" style="width:120px"><div class="plates" id="p-out">Enter a weight</div></div>'
+   +'<div class="panel"><h2>Back up your log</h2><p>Your progress is saved in this browser on this device. To move it to another device or keep a copy, copy this text and paste it into Restore on the other device.</p>'
+   +'<textarea class="in" id="bk" readonly>'+esc(JSON.stringify(S))+'</textarea>'
+   +'<p><button class="btn sm" id="bkcopy">Copy backup</button></p>'
+   +'<label class="f">Restore from backup</label><textarea class="in" id="rs" placeholder="Paste backup text here"></textarea>'
+   +'<p><button class="btn sm" id="rsgo">Restore</button> <button class="btn sm dng" id="reset">Erase everything</button></p><div id="bkmsg" class="note" style="padding:0"></div></div>';
+}
+
+function renderGuide(){
+  return '<div class="panel"><h2>How this block works</h2>'
+  +'<p>This is a Westside Barbell style <b>conjugate</b> plan: four days a week (Mon, Tue, Thu, Fri), built to push your bench, squat and deadlift. Weeks 1-6 build strength; week 7 tests new maxes.</p>'
+  +'<h3>Max Effort (ME) days</h3><ul><li>Work up to a heavy single (or triple) on a <b>different variation each week</b>. This builds strength without stale, overused movements.</li>'
+  +'<li>Go by bar speed and technique. Stop when the bar slows sharply or form breaks. A max is your best clean rep, not a grinder.</li>'
+  +'<li>Rest 3-5 minutes between heavy sets. Never miss lifts on purpose.</li></ul>'
+  +'<h3>Dynamic Effort (DE) days</h3><ul><li>Light weight, <b>maximum speed</b>: bench 50-60%, box squat 50-60%, speed pulls 55-70% of your competition max.</li>'
+  +'<li>Short rest (45-60 s). Every rep fast and identical. If the bar slows down, end the set early.</li>'
+  +'<li>The 3-week wave (50% to 55% to 60%) trains force production. Sets drop as the weight rises to keep fatigue in check.</li>'
+  +'<li>Have bands or chains? Hang about 25% of your max in band or chain tension at the top, and drop the bar weight about 10 percentage points.</li></ul>'
+  +'<h3>Accessory (repetition) work</h3><ul><li>Hits the weak links: triceps, lats and upper back, hamstrings and glutes, low back, and abs.</li>'
+  +'<li>Stay 1-3 reps shy of failure. Add reps first, then weight, week to week.</li>'
+  +'<li>The sled or walk on Friday is general conditioning (GPP). Keep it easy.</li></ul>'
+  +'<h3>The 7 weeks</h3><ul><li><b>Weeks 1-3:</b> first wave. Groove, load, peak.</li><li><b>Weeks 4-5:</b> new variations and the heaviest block.</li><li><b>Week 6:</b> taper. Opener rehearsal, volume cut about in half.</li><li><b>Week 7:</b> test. Bench Monday, squat Tuesday, deadlift Friday.</li></ul>'
+  +'<h3>Recovery</h3><ul><li>Sleep 7-9 hours. Eat at or slightly above maintenance with about 0.7-1 g protein per lb of bodyweight.</li><li>Wed, Sat and Sun: rest, walk, mobility.</li><li>Sharp joint pain, numbness or dizziness: stop and get it checked.</li></ul>'
+  +'<p class="note" style="padding:8px 0 0">General training information, not medical advice. Heavy lifting carries injury risk; use safeties and a spotter, and check with a doctor first if you have health concerns.</p></div>';
+}
+
+/* ---------- main render ---------- */
+function render(){
+  var app=$('#app');
+  app.innerHTML = S.tab==='train'?renderTrain(): S.tab==='progress'?renderProgress(): S.tab==='setup'?renderSetup(): renderGuide();
+  Array.prototype.forEach.call(document.querySelectorAll('#tabs button'),function(b){b.classList.toggle('on',b.getAttribute('data-tab')===S.tab);});
+}
+function refreshProg(){var p=$('#prog');if(p){var t=totals(S.week,S.day);p.textContent=t[0]+' / '+t[1]+' sets';}}
+
+/* ---------- events ---------- */
+function toggleDone(id,on){var lg=L(S.week,S.day); if(on) lg.done[id]=true; else delete lg.done[id]; save(); refreshProg();}
+document.addEventListener('click',function(e){
+  var t=e.target.closest('button'); if(!t) return;
+  if(t.dataset.tab){S.tab=t.dataset.tab;S._seen=1;save();render();window.scrollTo(0,0);return;}
+  if(t.dataset.week){S.week=+t.dataset.week;save();render();return;}
+  if(t.dataset.day){S.day=+t.dataset.day;save();render();return;}
+  if(t.dataset.chip){var on=!t.classList.contains('on');t.classList.toggle('on',on);toggleDone(t.dataset.chip,on);return;}
+  if(t.dataset.unit){var nu=t.dataset.unit; if(nu!==S.unit){var f=nu==='kg'?0.45359237:1/0.45359237;
+      ['bench','squat','deadlift'].forEach(function(k){if(S.maxes[k]) S.maxes[k]=Math.round(S.maxes[k]*f/(nu==='kg'?2.5:5))*(nu==='kg'?2.5:5);});
+      S.unit=nu; S.log={}; S.last={}; S.start=null; save();} render(); return;}
+  if(t.dataset.use){var w=parseFloat($('#e-w').value),r=parseFloat($('#e-r').value);if(w>0&&r>0){$('#m-'+t.dataset.use).value=rnd(ep(w,r));}return;}
+  if(t.id==='savemax'){
+    var m={bench:parseFloat($('#m-bench').value)||0,squat:parseFloat($('#m-squat').value)||0,deadlift:parseFloat($('#m-deadlift').value)||0};
+    S.arms=$('#arms').checked;
+    var changed=m.bench!==S.maxes.bench||m.squat!==S.maxes.squat||m.deadlift!==S.maxes.deadlift;
+    S.maxes=m; if(!S.start||changed&&Object.keys(S.log).length===0) S.start={bench:m.bench,squat:m.squat,deadlift:m.deadlift};
+    if(m.bench>0&&m.squat>0&&m.deadlift>0){S.tab='train';} save(); render(); window.scrollTo(0,0); return;}
+  if(t.id==='bkcopy'){var ta=$('#bk');ta.select();var ok=false;try{ok=navigator.clipboard&&navigator.clipboard.writeText(ta.value);}catch(x){}
+    $('#bkmsg').textContent='Backup selected. If it did not copy automatically, press and hold the text and choose Copy.';return;}
+  if(t.id==='rsgo'){try{var o=JSON.parse($('#rs').value);if(o&&o.v===1&&o.maxes){S=Object.assign({v:1},o);save();render();$('#bkmsg').textContent='Restored.';}else{$('#bkmsg').textContent='That does not look like a backup.';}}catch(x){$('#bkmsg').textContent='Could not read that text.';}return;}
+  if(t.id==='reset'){if(t.dataset.arm){try{localStorage.removeItem(KEY);}catch(x){} location.reload();}else{t.dataset.arm='1';t.textContent='Tap again to erase';}return;}
+});
+document.addEventListener('change',function(e){
+  var t=e.target, lg;
+  if(t.matches('input[type=checkbox][data-k]')){toggleDone(t.dataset.k,t.checked);return;}
+  if(t.dataset.w){lg=L(S.week,S.day);var v=lg.vals[t.dataset.w]||(lg.vals[t.dataset.w]={});v.w=t.value===''?null:parseFloat(t.value);if(t.dataset.ex&&v.w>0)S.last[t.dataset.ex]=v.w;save();return;}
+  if(t.dataset.r){lg=L(S.week,S.day);var v2=lg.vals[t.dataset.r]||(lg.vals[t.dataset.r]={});v2.r=t.value===''?null:parseFloat(t.value);save();return;}
+  if(t.dataset.att){lg=L(S.week,S.day);var v3=lg.vals[t.dataset.att]||(lg.vals[t.dataset.att]={});v3.res=t.value;
+    var wi=document.querySelector('input[data-w="'+t.dataset.att+'"]'); if(wi&&v3.w==null&&wi.value!=='') v3.w=parseFloat(wi.value); save(); refreshProg(); return;}
+});
+document.addEventListener('input',function(e){
+  var t=e.target;
+  if(t.id==='e-w'||t.id==='e-r'){var w=parseFloat($('#e-w').value),r=parseFloat($('#e-r').value);$('#e-out').value=(w>0&&r>0)?fmt(rnd(ep(w,r))):'';}
+  if(t.id==='p-w'){var tot=parseFloat(t.value),bar=S.unit==='kg'?20:45,pl=S.unit==='kg'?[25,20,15,10,5,2.5,1.25]:[45,35,25,10,5,2.5],out=$('#p-out');
+    if(!(tot>bar)){out.textContent=tot===bar?'Just the bar':'Enter a weight';return;}
+    var side=(tot-bar)/2,parts=[];pl.forEach(function(p){var n=Math.floor(side/p+1e-9);if(n>0){parts.push(n+' x '+p);side-=n*p;}});
+    out.textContent='Each side: '+parts.join(' + ')+(side>0.01?'  (off by '+fmt(side*2)+' '+S.unit+')':'')+'  [bar '+bar+']';}
+});
+
+render();
+try{ if('serviceWorker' in navigator && location.protocol==='https:'){ window.addEventListener('load',function(){ navigator.serviceWorker.register('sw.js').catch(function(){}); }); } }catch(e){}
+})();
+</script>
+</body>
+</html>
